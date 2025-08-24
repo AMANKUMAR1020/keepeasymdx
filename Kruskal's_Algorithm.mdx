@@ -1,0 +1,123 @@
+---
+title: Kruskal's Algorithm
+description: Learn how to implement Kruskal's algorithm for finding Minimum Spanning Trees
+tags: [Graph Theory, Algorithms, MST]
+---
+
+import { CodeBlock } from '@components/CodeBlock'
+
+# Kruskal's Algorithm
+
+Kruskal’s algorithm is a popular algorithm in graph theory that finds the **Minimum Spanning Tree (MST)** for a connected, weighted, undirected graph.
+
+---
+
+## 🔹 How Kruskal's Algorithm Works
+
+1. **Sort all edges by weight**  
+2. **Use a Union-Find (Disjoint Set)** structure to avoid cycles  
+3. **Add edges one by one** until all vertices are connected  
+
+---
+
+## 🔹 Key Concepts
+
+- **Union-Find**: A data structure that keeps track of elements partitioned into disjoint (non-overlapping) subsets.  
+- **Cycle Detection**: Kruskal's algorithm uses Union-Find to detect cycles in the graph.  
+
+---
+
+## 🔹 Step-by-Step Example
+
+1. Sort edges by weight: `[(u, v, weight)]`  
+2. Initialize Union-Find data structure  
+3. Iterate through sorted edges, adding each edge to the MST if it doesn't form a cycle  
+
+---
+
+## 🔹 Code Implementation
+
+<CodeBlock language="cpp">
+
+#include <iostream>
+#include <vector>
+#include <algorithm>
+using namespace std;
+
+struct Edge {
+    int u, v, weight;
+    bool operator<(Edge const& other) {
+        return weight < other.weight;
+    }
+};
+
+int find(int v, vector<int>& parent) {
+    if (v == parent[v])
+        return v;
+    return parent[v] = find(parent[v], parent);
+}
+
+void unite(int a, int b, vector<int>& parent, vector<int>& rank) {
+    a = find(a, parent);
+    b = find(b, parent);
+    if (a != b) {
+        if (rank[a] < rank[b])
+            swap(a, b);
+        parent[b] = a;
+        if (rank[a] == rank[b])
+            rank[a]++;
+    }
+}
+
+int main() {
+    int n = 5; // number of vertices
+    vector<Edge> edges = {
+        {0, 1, 10}, {0, 2, 6}, {0, 3, 5},
+        {1, 3, 15}, {2, 3, 4}
+    };
+
+    sort(edges.begin(), edges.end());
+
+    vector<int> parent(n), rank(n, 0);
+    for (int i = 0; i < n; i++)
+        parent[i] = i;
+
+    int cost = 0;
+    for (Edge e : edges) {
+        if (find(e.u, parent) != find(e.v, parent)) {
+            cost += e.weight;
+            unite(e.u, e.v, parent, rank);
+            cout << e.u << " - " << e.v << " : " << e.weight << endl;
+        }
+    }
+
+    cout << "Total cost: " << cost << endl;
+}
+
+</CodeBlock>
+
+---
+
+## 🔹 Complexity Analysis
+
+- **Time Complexity**:  
+  - Sorting edges → `O(E log E)`  
+  - Union-Find operations → ~`O(E log* V)` (almost constant)  
+  - Overall → **O(E log E)** or **O(E log V)**  
+
+- **Space Complexity**: `O(V + E)` for graph storage and Union-Find.  
+
+---
+
+## 🔹 Applications
+
+- Network design (e.g., laying cables, roads)  
+- Clustering algorithms  
+- Approximation algorithms for NP-hard problems  
+
+---
+
+## 🚀 Want to Learn More?
+
+Interested in exploring **Prim's algorithm**, **Dijkstra’s algorithm**, or deeper **Union-Find optimizations**? Let me know and I’ll expand this module!
+
