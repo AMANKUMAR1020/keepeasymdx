@@ -1,0 +1,124 @@
+---
+title: CSES - Subordinates
+description: Learn how to solve the CSES "Subordinates" problem using DFS and trees
+tags: [Graph Theory, Trees, DFS, CSES]
+---
+
+import { CodeBlock } from '@components/CodeBlock'
+
+# CSES - Subordinates
+
+The **Subordinates** problem asks you to calculate, for each employee in a company hierarchy, the number of people working under them (directly or indirectly).
+
+---
+
+## 🔹 Problem Statement
+
+You are given the structure of a company. Each employee has exactly one direct boss (except the general director).
+
+Your task: **for each employee, find the number of their subordinates.**
+
+---
+
+## 🔹 Input Format
+
+- First line: integer `n` – the number of employees.
+- Next `n-1` integers: for employees `2 … n`, their direct boss.
+
+---
+
+## 🔹 Output Format
+
+Print `n` integers – for each employee `1 … n`, the number of their subordinates.
+
+---
+
+## 🔹 Constraints
+
+- `1 ≤ n ≤ 2 ⋅ 10^5`
+- Time limit: `1.00 s`
+- Memory limit: `512 MB`
+
+---
+
+## 🔹 Example
+
+**Input:**
+5
+1 1 2 3
+
+text
+
+**Output:**
+4 1 1 0 0
+
+text
+
+---
+
+## 🔹 Approach
+
+1. **Model the company as a tree**, with the director as the root.
+2. For each employee, recursively count the size of their subtree.
+3. Subordinates = `subtree_size - 1`.
+
+We can efficiently compute this using **DFS** in `O(n)`.
+
+---
+
+## 🔹 Code Implementation
+
+<Code>
+
+#include <iostream>
+#include <vector>
+using namespace std;
+
+const int MAXN = 200005;
+vector<int> tree[MAXN];
+int ans[MAXN];
+
+// DFS function returns the number of subordinates of node u
+int dfs(int u) {
+    int count = 0;
+    for (int v : tree[u]) {
+        count += dfs(v) + 1; // +1 for direct subordinate
+    }
+    ans[u] = count;
+    return count;
+}
+
+int main() {
+    int n;
+    cin >> n;
+    for (int i = 2; i <= n; ++i) {
+        int boss;
+        cin >> boss;
+        tree[boss].push_back(i);
+    }
+    dfs(1);
+    for (int i = 1; i <= n; ++i) {
+        cout << ans[i] << " ";
+    }
+    cout << endl;
+    return 0;
+}
+
+</Code>
+
+---
+
+## 🔹 Complexity Analysis
+
+- **Time Complexity:** `O(n)` – one DFS traversal.
+- **Space Complexity:** `O(n)` – adjacency list plus answer array.
+
+---
+
+## 🔹 Applications
+
+- **Organization charts** – computing team sizes.
+- **Tree DP problems** – subtree counts and aggregations.
+- **Hierarchical data analysis** – e.g., file systems, taxonomy trees.
+
+---
