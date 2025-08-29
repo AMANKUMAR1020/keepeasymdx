@@ -1,0 +1,175 @@
+---
+title: Two Player Card Game Simulation
+description: Determine if a two-player card game could result in given scores and generate a possible card sequence.
+tags: [Greedy, Simulation, Games]
+---
+
+import { CodeBlock } from '@components/CodeBlock'
+
+# Two Player Card Game Simulation
+
+This problem is a simulation of a two-player card game.
+
+Each player has `n` unique cards numbered `1` to `n`. In every round, both players reveal a card simultaneously.  
+- The player with the higher card wins 1 point.  
+- If both cards are equal, no one scores.
+
+Given the final scores of both players after all cards have been played, determine whether such a game configuration is possible. If yes, provide an example.
+
+---
+
+## 🔹 Problem Statement
+
+You're given:
+
+- `t` test cases.  
+- For each test case, three integers:  
+  - `n`: number of cards per player  
+  - `a`: score of player A  
+  - `b`: score of player B
+
+Your task is to output:
+- `YES` if there exists a valid play sequence producing scores `a` and `b`. Then, provide one possible game by printing the sequence of cards played by both players.
+- `NO` otherwise.
+
+---
+
+## 🔹 Input Format
+
+- First line: integer `t` — number of test cases  
+- Next `t` lines: three integers `n a b` per line
+
+---
+
+## 🔹 Output Format
+
+For each test case:
+- Output `YES` and two lines (card sequences for both players) if a valid game exists
+- Otherwise, output `NO`
+
+---
+
+## 🔹 Constraints
+
+- `1 ≤ t ≤ 1000`  
+- `1 ≤ n ≤ 100`  
+- `0 ≤ a, b ≤ n`
+
+---
+
+## 🔹 Example
+
+**Input:**
+5
+4 1 2
+2 0 1
+3 0 0
+2 1 1
+4 4 1
+
+makefile
+Copy code
+
+**Output:**
+YES
+1 4 3 2
+2 1 3 4
+NO
+YES
+1 2 3
+1 2 3
+YES
+1 2
+2 1
+NO
+
+cpp
+Copy code
+
+---
+
+## 🔹 Approach
+
+To simulate this:
+
+1. We know that `a + b ≤ n` because only one player can win each round.
+2. If `a + b > n`, it's an invalid case → `NO`.
+3. Otherwise, simulate a valid configuration:
+   - Assign `a` rounds where player A plays a higher card than B.
+   - Assign `b` rounds where player B wins.
+   - Fill remaining with ties.
+
+Use a greedy or constructive approach to generate valid permutations for both players.
+
+---
+
+## 🔹 Code Implementation
+
+<CodeBlock>
+
+```cpp
+#include <iostream>
+#include <vector>
+#include <algorithm>
+using namespace std;
+
+void solve(int n, int a, int b) {
+    if (a + b > n) {
+        cout << "NO\n";
+        return;
+    }
+
+    vector<int> A(n), B(n);
+    int num_equal = n - a - b;
+    int val = 1;
+
+    // Assign ties first
+    for (int i = 0; i < num_equal; ++i) {
+        A[i] = val;
+        B[i] = val;
+        ++val;
+    }
+
+    // Assign A wins
+    for (int i = num_equal; i < num_equal + a; ++i) {
+        A[i] = val + 1;
+        B[i] = val;
+        val += 2;
+    }
+
+    // Assign B wins
+    for (int i = num_equal + a; i < n; ++i) {
+        A[i] = val;
+        B[i] = val + 1;
+        val += 2;
+    }
+
+    // Check for validity
+    vector<int> usedA(n + 1, 0), usedB(n + 1, 0);
+    for (int i = 0; i < n; ++i) {
+        if (A[i] > n || B[i] > n || A[i] < 1 || B[i] < 1 || usedA[A[i]] || usedB[B[i]]) {
+            cout << "NO\n";
+            return;
+        }
+        usedA[A[i]] = 1;
+        usedB[B[i]] = 1;
+    }
+
+    cout << "YES\n";
+    for (int x : A) cout << x << " ";
+    cout << "\n";
+    for (int x : B) cout << x << " ";
+    cout << "\n";
+}
+
+int main() {
+    int t;
+    cin >> t;
+    while (t--) {
+        int n, a, b;
+        cin >> n >> a >> b;
+        solve(n, a, b);
+    }
+    return 0;
+}
+</CodeBlock>
