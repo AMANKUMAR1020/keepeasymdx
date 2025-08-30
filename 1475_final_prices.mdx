@@ -1,0 +1,103 @@
+<svg viewBox="0 0 500 180" width="100%" role="img" aria-label="Stack simulation for discount application"> <rect x="20" y="20" width="460" height="140" fill="none" stroke="currentColor" /> <text x="30" y="45" font-size="14">Stack (holds indices):</text> <text x="30" y="75" font-size="14">Check top → Compare → Pop if ≥ current</text> <text x="30" y="105" font-size="14">Apply discount → Store result → Push current</text> </svg>
+Optimal Stack-based Algorithm
+class Solution {
+public:
+    vector<int> finalPrices(vector<int>& prices) {
+        int n = prices.size();
+        vector<int> ans(prices);
+        stack<int> st;
+
+        for (int i = 0; i < n; ++i) {
+            while (!st.empty() && prices[st.top()] >= prices[i]) {
+                int idx = st.top();
+                st.pop();
+                ans[idx] = prices[idx] - prices[i];
+            }
+            st.push(i);
+        }
+
+        return ans;
+    }
+};
+
+How it works
+Step	Stack	Current	Action	Updated Prices
+0	[]	8	Push index 0	[8, 4, 6, 2, 3]
+1	[0]	4	8 ≥ 4 → pop, apply 8−4=4	[4, 4, 6, 2, 3]
+	[]	4	Push index 1	—
+2	[1]	6	4 < 6 → Push index 2	—
+3	[1, 2]	2	6 ≥ 2 → pop (6−2=4), 4 ≥ 2 → pop (4−2=2)	[4, 2, 4, 2, 3]
+4	[3]	3	2 < 3 → Push index 4	—
+Complexity
+Aspect	Value
+Time	O(n)
+Space	O(n)
+Data Struct	Stack
+
+The solution is linear because each element is pushed and popped at most once from the stack.
+
+Edge Cases
+
+✅ Single item → no discount
+
+✅ Prices in decreasing order → no discounts applied
+
+✅ Prices in increasing order → all get immediate discounts
+
+✅ Duplicates? → Works fine (≥ condition handles it)
+
+Interactive (playground)
+<Demo />
+
+export default function Demo() {
+const [prices, setPrices] = useState([8, 4, 6, 2, 3]);
+
+const computeFinalPrices = (prices) => {
+const ans = [...prices];
+const st = [];
+for (let i = 0; i < prices.length; i++) {
+while (st.length && prices[st[st.length - 1]] >= prices[i]) {
+const idx = st.pop();
+ans[idx] = prices[idx] - prices[i];
+}
+st.push(i);
+}
+return ans;
+};
+
+const onChange = (i, val) => {
+const copy = [...prices];
+copy[i] = Math.max(0, Number(val));
+setPrices(copy);
+};
+
+return (
+<div style={{borderRadius:16,padding:16,boxShadow:'0 6px 24px rgba(0,0,0,0.08)'}}>
+<h3 style={{marginTop:0}}>Discount Price Simulator</h3>
+<p>Adjust the prices and see how discounts apply:</p>
+<div style={{display:'flex',gap:12,flexWrap:'wrap'}}>
+{prices.map((p, i) => (
+<label key={i}>
+Item {i + 1}: <input type="number" value={p} min={0} onChange={e => onChange(i, e.target.value)} />
+</label>
+))}
+</div>
+<p style={{marginTop:12}}><strong>Final Prices:</strong> {computeFinalPrices(prices).join(', ')}</p>
+</div>
+);
+}
+
+Summary & Tips
+
+Use a monotonic stack (decreasing) to find next smaller or equal values.
+
+Time complexity is O(n) — much faster than nested loops.
+
+Always simulate from left to right, since discounts are applied to the next items.
+
+Similar Problems
+Problem	Technique
+739. Daily Temperatures	Monotonic Stack ↑
+901. Online Stock Span	Monotonic Stack ↓
+496. Next Greater Element I	Stack (Next Greater)
+84. Largest Rectangle in Histogram	Stack
