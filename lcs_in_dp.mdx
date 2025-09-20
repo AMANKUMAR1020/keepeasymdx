@@ -1,0 +1,128 @@
+---
+title: Dynamic Programming - Subsequences
+description: Learn how to solve subsequence-related problems using Dynamic Programming in C++
+tags: [Dynamic Programming, Subsequences, C++]
+---
+
+import { CodeBlock } from '@components/CodeBlock'
+
+# Dynamic Programming on Subsequences
+
+Dynamic Programming (DP) is a powerful technique for solving problems involving subsequences.  
+Common tasks include:
+- Counting subsequences
+- Finding the longest subsequence (increasing, common, etc.)
+- Optimizing subsequence selection (max sum, min cost, etc.)
+
+---
+
+## 🔹 Problem Statement (Example: Longest Increasing Subsequence)
+
+Given an array of integers, find the length of the **Longest Increasing Subsequence (LIS)**.
+
+---
+
+## 🔹 Input Format
+
+- First line: integer `n` – size of the array  
+- Second line: `n` integers – the elements of the array  
+
+---
+
+## 🔹 Output Format
+
+A single integer – the length of the LIS.
+
+---
+
+## 🔹 Constraints
+
+- `1 ≤ n ≤ 10^5`  
+- `-10^9 ≤ arr[i] ≤ 10^9`  
+
+---
+
+## 🔹 Example
+
+**Input:**
+6
+10 9 2 5 3 7
+
+makefile
+Copy code
+
+**Output:**
+3
+
+yaml
+Copy code
+
+Explanation: LIS is `[2, 5, 7]`.
+
+---
+
+## 🔹 Approach
+
+There are two popular DP approaches:
+
+### 1. **O(n²) DP**
+- For each element, check all previous elements.
+- If `arr[j] < arr[i]`, update `dp[i] = max(dp[i], dp[j] + 1)`.
+
+### 2. **O(n log n) Optimized (Patience Sorting + Binary Search)**
+- Maintain a vector representing the smallest possible LIS ending at each length.
+- Use `lower_bound` to place elements efficiently.
+
+---
+
+## 🔹 Code Implementation
+
+<Code>
+
+#include <bits/stdc++.h>
+using namespace std;
+
+// O(n log n) solution for LIS
+int longestIncreasingSubsequence(vector<int>& arr) {
+    vector<int> lis;
+    for (int x : arr) {
+        auto it = lower_bound(lis.begin(), lis.end(), x);
+        if (it == lis.end())
+            lis.push_back(x);
+        else
+            *it = x;
+    }
+    return lis.size();
+}
+
+int main() {
+    ios::sync_with_stdio(false);
+    cin.tie(nullptr);
+
+    int n;
+    cin >> n;
+    vector<int> arr(n);
+    for (int i = 0; i < n; i++) cin >> arr[i];
+
+    cout << longestIncreasingSubsequence(arr) << "\n";
+    return 0;
+}
+
+</Code>
+
+---
+
+## 🔹 Complexity Analysis
+
+- **O(n²)** DP method – good for `n ≤ 2000`  
+- **O(n log n)** method – works for `n ≤ 10^5`  
+
+---
+
+## 🔹 Applications
+
+- **Sequence analysis** – longest ordered subsequence, DNA/protein analysis  
+- **Stock trading** – finding increasing profit opportunities  
+- **Competitive programming** – subsequence-based optimization problems  
+
+---
