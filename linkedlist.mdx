@@ -1,0 +1,121 @@
+---
+title: "Linked List — Flexible Dynamic Data Structure"
+description: "Sequential data storage with C++ examples, strengths, weaknesses, and when to use it."
+date: 2025-09-09
+---
+
+# Linked List
+
+> A **linked list** is a linear data structure where elements (called *nodes*) are connected using pointers. Each node contains data and a pointer to the next node, enabling **dynamic memory allocation** and efficient insertion or deletion.
+
+---
+
+## When to use it
+
+- **Dynamic data needs** where size changes frequently  
+- **Efficient insert/delete** in middle positions  
+- **Avoiding array resizing costs**  
+- **Implementing other data structures** (e.g., stacks, queues)
+
+---
+
+## Visual: Singly Linked List behavior
+
+```plaintext
+Initial:   NULL
+Insert 10: [10] -> NULL
+Insert 20: [10] -> [20] -> NULL
+Insert 30: [10] -> [20] -> [30] -> NULL
+Delete 20: [10] -> [30] -> NULL
+
+
+
+#include <iostream>
+
+struct Node {
+    int data;
+    Node* next;
+    Node(int val) : data(val), next(nullptr) {}
+};
+
+class LinkedList {
+private:
+    Node* head;
+
+public:
+    LinkedList() : head(nullptr) {}
+
+    // Insert at the end
+    void insert(int value) {
+        Node* newNode = new Node(value);
+        if (!head) {
+            head = newNode;
+            return;
+        }
+        Node* temp = head;
+        while (temp->next) {
+            temp = temp->next;
+        }
+        temp->next = newNode;
+    }
+
+    // Delete by value
+    void remove(int value) {
+        if (!head) return;
+        if (head->data == value) {
+            Node* toDelete = head;
+            head = head->next;
+            delete toDelete;
+            return;
+        }
+        Node* temp = head;
+        while (temp->next && temp->next->data != value) {
+            temp = temp->next;
+        }
+        if (temp->next) {
+            Node* toDelete = temp->next;
+            temp->next = temp->next->next;
+            delete toDelete;
+        }
+    }
+
+    // Display the list
+    void display() const {
+        Node* temp = head;
+        while (temp) {
+            std::cout << temp->data << " -> ";
+            temp = temp->next;
+        }
+        std::cout << "NULL\n";
+    }
+
+    ~LinkedList() {
+        Node* current = head;
+        while (current) {
+            Node* nextNode = current->next;
+            delete current;
+            current = nextNode;
+        }
+    }
+};
+
+int main() {
+    LinkedList list;
+    list.insert(10);
+    list.insert(20);
+    list.insert(30);
+    list.display(); // 10 -> 20 -> 30 -> NULL
+
+    list.remove(20);
+    list.display(); // 10 -> 30 -> NULL
+
+    return 0;
+}
+Note:
+Linked lists require extra memory for pointers and have slower random access compared to arrays, but excel at dynamic insertion and deletion.
+
+vbnet
+Copy code
+
+
+Would you like me to add **MDX components** (like `<CodeBlock>` or `<Alert>` wrappers for better visuals in a React-based site such as Docusaurus or Next.js MDX)?
